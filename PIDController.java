@@ -1,3 +1,4 @@
+// change this to your package name
 package pid;
 
 /**
@@ -13,7 +14,7 @@ public class PIDController {
 
   // required fields for tracking error over time
   private double prevError = 0;
-  private double integral = 0;
+  private double errorIntegral = 0;
   private long prevTime = System.nanoTime();
 
   // field for set end point
@@ -55,13 +56,13 @@ public class PIDController {
     double timeDelta = (System.nanoTime() - prevTime) / 1e9;
 
     // add integral error
-    integral += prevError * timeDelta;
+    errorIntegral += prevError * timeDelta;
 
     // compute derivative error
-    double derivative = (error - prevError) / timeDelta;
+    double errorDerivative = (error - prevError) / timeDelta;
 
     // sum all error terms with respective control factors to get control output
-    double value = Kp * error + Ki * integral + Kd * derivative;
+    double value = Kp * error + Ki * errorIntegral + Kd * errorDerivative;
 
     // if there is a set minimum output, apply it
     if (!Double.isNaN(min)) {
@@ -100,6 +101,7 @@ public class PIDController {
   public void setTarget(double target) {
     this.target = target;
     currCount = 0;
+    errorIntegral = 0;
   }
 
   /**
