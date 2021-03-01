@@ -8,43 +8,54 @@ package auto;
 public abstract class PathDriver {
 
   private int segmentIndex = 0;
-  private DriveSegment[] driveSegments;
+  private LinearSegment[] linearSegments;
   private boolean stopped = false;
+  private boolean turning = true;
 
   // implement this method in your extension of this class
   protected abstract void driveInit();
 
   // implement this method in your extension of this class
-  protected abstract boolean drivePeriodic(DriveSegment driveSegment, int i);
+  protected abstract boolean turnPeriodic(double headingDegrees, int i);
+
+  // implement this method in your extension of this class
+  protected abstract boolean drivePeriodic(double distanceInches, int i);
 
   // implement this method in your extension of this class
   protected abstract void driveStop();
 
   int getPathSegmentCount() {
-    return driveSegments == null ? 0 : driveSegments.length;
+    return linearSegments == null ? 0 : linearSegments.length;
   }
 
-
-  public void loadSegments(DriveSegment... driveSegments) {
-    this.driveSegments = driveSegments;
+  public void loadSegments(LinearSegment... linearSegments) {
+    this.linearSegments = linearSegments;
   }
 
   public void init() {
     segmentIndex = 0;
     driveInit();
-    if (driveSegments == null || driveSegments.length == 0) {
+    if (linearSegments == null || linearSegments.length == 0) {
       System.out.println("No path driver segments loaded!");
     }
   }
 
   public void periodic() {
-    if (driveSegments == null || segmentIndex > driveSegments.length) {
+    if (linearSegments == null || segmentIndex > linearSegments.length) {
       if (!stopped) {
         driveStop();
         stopped = true;
       }
-    } else if (drivePeriodic(driveSegments[segmentIndex], segmentIndex)) {
-      segmentIndex++;
+    } else if(turning) {
+      double heading = linearSegments[segmentIndex].getHeadingDegrees();
+      if (turnPeriodic(heading, segmentIndex)) {
+        turning = false;
+      }
+    } else {
+      double distance = linearSegments[segmentIndex].getDistanceInches();
+      if (drivePeriodic(distance, segmentIndex)) {
+        segmentIndex++;
+      }
     }
   }
 

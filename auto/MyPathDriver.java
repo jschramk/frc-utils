@@ -26,17 +26,29 @@ public class MyPathDriver extends PathDriver {
   }
 
   /**
-   * This method is called periodically during the autonomous routine.
+   * This method is called periodically while the robot turns to a new target heading.
    *
-   * @param segment the current segment in the path that is being driven
-   * @param i       the index of the current segment (starts at 0)
-   * @return true when this segment has been fully driven, false otherwise
+   * @param headingDegrees the target heading in degrees
+   * @param i              the index of the current segment (starts at 0)
+   * @return true if the robot is done turning, false otherwise
    */
-  @Override protected boolean drivePeriodic(DriveSegment segment, int i) {
+  @Override protected boolean turnPeriodic(double headingDegrees, int i) {
 
-    // get segment parameters
-    // double headingDegrees = segment.getHeadingDegrees();
-    // double distanceInches = segment.getDistanceInches();
+    // add your turn code here
+
+    // return true when this segment is completed
+    return false;
+
+  }
+
+  /**
+   * This method is called periodically while the robot drives a set distance forward.
+   *
+   * @param distanceInches the target distance in inches
+   * @param i              the index of the current segment (starts at 0)
+   * @return true if the robot is done turning, false otherwise
+   */
+  @Override protected boolean drivePeriodic(double distanceInches, int i) {
 
     // add your drive code here
 
